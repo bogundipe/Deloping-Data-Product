@@ -69,13 +69,13 @@ server <- function(input, output) {
   output$productOutput <- renderUI({
     selectInput("typeInput", "Product",
                 sort(unique(bcl$Type)),
-                selected = "WINE")
+                selected = "Wine")
   })
   
   output$subtypeOutput <- renderUI({
     selectInput("subtypeInput", "Product Type",
                 sort(unique(bcl$Subtype)),
-                selected = "TABLE WINE WHITE")
+                selected = "Table Wine White")
   })
   
   output$tips <- renderText({
