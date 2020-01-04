@@ -63,7 +63,7 @@ server <- function(input, output) {
   output$countryOutput <- renderUI({
     selectInput("countryInput", "Country",
                 sort(unique(bcl$Country)),
-                selected = "CANADA")
+                selected = "Canada")
   })
   
   output$productOutput <- renderUI({
