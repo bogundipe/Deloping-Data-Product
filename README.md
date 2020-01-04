@@ -7,7 +7,7 @@ Provide some basic input such as price range, country, as well as liquor type.
 The app would generate alcohol content, subtype, and legal requirement for alcohol purchase
 in selected country.
 
-Link to the app is https://bogundip-appdev.shinyapps.io/pract_shiny
+Link to the app is https://bogundip-appdev.shinyapps.io/pract_shiny/
 
 Link to source code is https://github.com/bogundipe/Deloping-Data-Product/blob/master/shiny_app.Rmd
 
