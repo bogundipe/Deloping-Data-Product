@@ -1,0 +1,116 @@
+---
+title: "pract_shiny"
+author: "Bolaji Ogundipe"
+date: "1/3/2020"
+output: html_document
+---
+
+
+```{r, echo=TRUE}
+
+library(shiny)
+library(shinythemes)
+library(ggplot2)
+library(dplyr)
+
+
+bcl <- read.csv("bcl-data.csv")
+
+# Define UI for application that draws a frequency polygons
+ui <- fluidPage(
+  
+  theme = shinytheme("superhero"),
+  titlePanel("BC Liquor Store prices"),
+  sidebarLayout(
+    sidebarPanel(
+      uiOutput("countryOutput"),
+      sliderInput("priceInput", "Prices", min = 0, max = 100,
+                  value = c(5, 100),
+                  pre = "$"),
+      uiOutput("productOutput"),
+      uiOutput("subtypeOutput"),
+      textOutput("tips")
+      
+    ),
+    mainPanel(plotOutput("coolplot"),
+              br(), br(),
+              tableOutput("result"),
+              
+    )
+    
+    
+  )
+)
+```
+
+```{r, echo=TRUE}
+# Define server logic required to draw a freqpoly
+server <- function(input, output) {
+  filtered <- reactive({
+    if(is.null(input$countryInput)){
+      return(NULL)
+    }
+    
+    bcl %>%
+      filter(Price >= input$priceInput[1],
+             Price<= input$priceInput[2],
+             Type == input$typeInput,
+             Country == input$countryInput,
+             Subtype == input$subtypeInput
+      )
+  })
+  
+  output$countryOutput <- renderUI({
+    selectInput("countryInput", "Country",
+                sort(unique(bcl$Country)),
+                selected = "CANADA")
+  })
+  
+  output$productOutput <- renderUI({
+    selectInput("typeInput", "Product",
+                sort(unique(bcl$Type)),
+                selected = "WINE")
+  })
+  
+  output$subtypeOutput <- renderUI({
+    selectInput("subtypeInput", "Product Type",
+                sort(unique(bcl$Subtype)),
+                selected = "TABLE WINE WHITE")
+  })
+  
+  output$tips <- renderText({
+    paste("Warning! In this country", input$contryInput, "Purchse of", input$typeInput, 
+          "is for Adults")
+  })
+  
+  output$coolplot <- renderPlot({
+    if(is.null(filtered())){
+      return()
+    }
+    ggplot(filtered(), mapping = aes(Alcohol_Content)) +
+      geom_freqpoly(binwidth = 0.5) +
+      labs(title = "Distribution of Alcohol Content", 
+           x ="% of content", y = "# of products") +
+      theme(
+        panel.background = element_rect(fill = "lightblue",
+                                        colour = "lightblue",
+                                        size = 0.5, linetype = "solid"),
+        panel.grid.major = element_line(size = 0.5, linetype = 'solid',
+                                        colour = "white"), 
+        panel.grid.minor = element_line(size = 0.25, linetype = 'solid',
+                                        colour = "white"),
+        plot.title = element_text(color="black", size=14, 
+                                  face="bold.italic", hjust = 0.5),
+        axis.title.x = element_text(color="black", size=11),
+        axis.title.y = element_text(color="black", size=11)
+      ) 
+    
+    
+  })
+  
+  output$result <- renderTable({
+    filtered()
+  })
+  
+}
+```
